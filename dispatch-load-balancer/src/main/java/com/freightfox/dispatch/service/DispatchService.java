@@ -16,35 +16,37 @@ import com.freightfox.dispatch.dto.DispatchPlanResponse;
 import com.freightfox.dispatch.dto.OrderRequest;
 import com.freightfox.dispatch.dto.VehicleDispatchResponse;
 import com.freightfox.dispatch.dto.VehicleRequest;
+
 import com.freightfox.dispatch.entity.DeliveryOrder;
 import com.freightfox.dispatch.entity.Vehicle;
+
 import com.freightfox.dispatch.enums.Priority;
+
 import com.freightfox.dispatch.repository.DeliveryOrderRepository;
 import com.freightfox.dispatch.repository.VehicleRepository;
+
 import com.freightfox.dispatch.util.DistanceCalculator;
 
 @Service
-public class DispatchService 
-{
+public class DispatchService {
 
     private final DeliveryOrderRepository orderRepository;
     private final VehicleRepository vehicleRepository;
 
     public DispatchService(
             DeliveryOrderRepository orderRepository,
-            VehicleRepository vehicleRepository) 
-    {
+            VehicleRepository vehicleRepository) {
+
         this.orderRepository = orderRepository;
         this.vehicleRepository = vehicleRepository;
     }
 
     @Transactional
-    public ApiResponse acceptOrders(OrderRequest request) 
-    {
+    public ApiResponse acceptOrders(OrderRequest request) {
 
         if (request == null || request.getOrders() == null
-                || request.getOrders().isEmpty()) 
-        {
+                || request.getOrders().isEmpty()) {
+
             throw new IllegalArgumentException(
                     "Orders list cannot be empty.");
         }
@@ -56,11 +58,11 @@ public class DispatchService
     }
 
     @Transactional
-    public ApiResponse acceptVehicles(VehicleRequest request) 
-    {
+    public ApiResponse acceptVehicles(VehicleRequest request) {
 
         if (request == null || request.getVehicles() == null
                 || request.getVehicles().isEmpty()) {
+
             throw new IllegalArgumentException(
                     "Vehicles list cannot be empty.");
         }
@@ -77,14 +79,14 @@ public class DispatchService
         List<DeliveryOrder> orders = orderRepository.findAll();
         List<Vehicle> vehicles = vehicleRepository.findAll();
 
-        
+        // Sort orders by priority: HIGH, MEDIUM, LOW
         orders.sort(
                 Comparator.comparingInt(
                         order -> getPriorityRank(order.getPriority())
                 )
         );
 
-        
+        // Initialize vehicle states
         List<VehicleState> states = new ArrayList<>();
 
         for (Vehicle vehicle : vehicles) {
@@ -93,7 +95,7 @@ public class DispatchService
 
         List<String> unassignedOrders = new ArrayList<>();
 
-       
+        // Assign orders to vehicles
         for (DeliveryOrder order : orders) {
 
             VehicleState bestVehicle = null;
@@ -104,13 +106,13 @@ public class DispatchService
                 BigDecimal newLoad =
                         state.totalLoad.add(order.getPackageWeight());
 
-                
+                // Check vehicle capacity
                 if (newLoad.compareTo(
                         state.vehicle.getCapacity()) > 0) {
                     continue;
                 }
 
-               
+                // Calculate distance
                 double distance =
                         DistanceCalculator.calculateDistance(
                                 state.currentLatitude,
@@ -119,32 +121,30 @@ public class DispatchService
                                 order.getLongitude()
                         );
 
-                
+                // Select nearest available vehicle
                 if (distance < minimumDistance) {
                     minimumDistance = distance;
                     bestVehicle = state;
                 }
             }
 
-            
+            // If no vehicle is available, record the order
             if (bestVehicle == null) {
                 unassignedOrders.add(order.getOrderId());
                 continue;
             }
 
-           
+            // Update vehicle load and distance
             bestVehicle.totalLoad =
                     bestVehicle.totalLoad.add(
                             order.getPackageWeight());
 
-            
             bestVehicle.totalDistance += minimumDistance;
 
-          
             bestVehicle.currentLatitude = order.getLatitude();
             bestVehicle.currentLongitude = order.getLongitude();
 
-            
+            // Add assigned order
             bestVehicle.assignedOrders.add(
                     new AssignedOrderResponse(
                             order.getOrderId(),
@@ -157,14 +157,7 @@ public class DispatchService
             );
         }
 
-       
-        if (!unassignedOrders.isEmpty()) {
-            throw new IllegalStateException(
-                    "Unable to assign orders: " + unassignedOrders
-            );
-        }
-
-        
+        // Prepare dispatch response
         List<VehicleDispatchResponse> result = new ArrayList<>();
 
         for (VehicleState state : states) {
@@ -183,10 +176,11 @@ public class DispatchService
             );
         }
 
-        return new DispatchPlanResponse(result);
+        // Return assigned and unassigned orders together
+        return new DispatchPlanResponse(result, unassignedOrders);
     }
 
-  
+    // Priority ranking
     private int getPriorityRank(Priority priority) {
 
         if (priority == Priority.HIGH) {
@@ -200,14 +194,16 @@ public class DispatchService
         return 3;
     }
 
-   
+    // Internal vehicle state
     private static class VehicleState {
 
         private final Vehicle vehicle;
 
         private BigDecimal totalLoad = BigDecimal.ZERO;
+
         private double currentLatitude;
         private double currentLongitude;
+
         private double totalDistance = 0.0;
 
         private final List<AssignedOrderResponse> assignedOrders =
