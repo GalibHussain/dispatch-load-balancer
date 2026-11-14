@@ -77,7 +77,7 @@ public class DispatchService
         List<DeliveryOrder> orders = orderRepository.findAll();
         List<Vehicle> vehicles = vehicleRepository.findAll();
 
-        // Step 1: Sort orders by priority
+        
         orders.sort(
                 Comparator.comparingInt(
                         order -> getPriorityRank(order.getPriority())

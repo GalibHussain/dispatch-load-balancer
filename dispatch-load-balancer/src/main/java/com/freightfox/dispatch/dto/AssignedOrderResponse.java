@@ -30,11 +30,13 @@ public class AssignedOrderResponse {
         this.priority = priority;
     }
 
-    public String getOrderId() {
+    public String getOrderId() 
+    {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public void setOrderId(String orderId) 
+    {
         this.orderId = orderId;
     }
 
@@ -42,7 +44,8 @@ public class AssignedOrderResponse {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(double latitude) 
+    {
         this.latitude = latitude;
     }
 
@@ -50,7 +53,8 @@ public class AssignedOrderResponse {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(double longitude) 
+    {
         this.longitude = longitude;
     }
 
@@ -58,23 +62,28 @@ public class AssignedOrderResponse {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(String address) 
+    {
         this.address = address;
     }
 
-    public BigDecimal getPackageWeight() {
+    public BigDecimal getPackageWeight() 
+    {
         return packageWeight;
     }
 
-    public void setPackageWeight(BigDecimal packageWeight) {
+    public void setPackageWeight(BigDecimal packageWeight) 
+    {
         this.packageWeight = packageWeight;
     }
 
-    public Priority getPriority() {
+    public Priority getPriority() 
+    {
         return priority;
     }
 
-    public void setPriority(Priority priority) {
+    public void setPriority(Priority priority) 
+    {
         this.priority = priority;
     }
 }

@@ -26,21 +26,24 @@ import io.swagger.v3.oas.annotations.media.Schema;
     name = "Dispatch Management",
     description = "APIs for managing delivery orders, vehicles and dispatch planning"
 )
-public class DispatchController {
+public class DispatchController 
+{
 
     private final DispatchService dispatchService;
 
-    public DispatchController(DispatchService dispatchService) {
+    public DispatchController(DispatchService dispatchService) 
+    {
         this.dispatchService = dispatchService;
     }
 
-    // Accept Delivery Orders
+   
     @PostMapping("/orders")
     @Operation(
         summary = "Accept delivery orders",
         description = "Accepts and stores delivery orders with location, package weight and priority."
     )
-    @ApiResponses(value = {
+    @ApiResponses(value = 
+{
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200",
             description = "Delivery orders accepted successfully"
@@ -70,7 +73,7 @@ public class DispatchController {
         return dispatchService.acceptOrders(request);
     }
 
-    // Accept Vehicle Details
+    
     @PostMapping("/vehicles")
     @Operation(
         summary = "Accept vehicle details",
@@ -87,11 +90,12 @@ public class DispatchController {
             content = @Content
         )
     })
-    public ApiResponse addVehicles(@RequestBody VehicleRequest request) {
+    public ApiResponse addVehicles(@RequestBody VehicleRequest request)
+    {
         return dispatchService.acceptVehicles(request);
     }
 
-    // Generate Dispatch Plan
+   
     @GetMapping("/plan")
     @Operation(
         summary = "Generate dispatch plan",

@@ -26,28 +26,36 @@ public class VehicleDispatchResponse
 	        this.totalDistance = totalDistance;
 	        this.assignedOrders = assignedOrders;
 	}
-	public String getVehicleId() {
+	public String getVehicleId() 
+	{
 		return vehicleId;
 	}
-	public void setVehicleId(String vehicleId) {
+	public void setVehicleId(String vehicleId) 
+	{
 		this.vehicleId = vehicleId;
 	}
-	public BigDecimal getTotalLoad() {
+	public BigDecimal getTotalLoad() 
+	{
 		return totalLoad;
 	}
-	public void setTotalLoad(BigDecimal totalLoad) {
+	public void setTotalLoad(BigDecimal totalLoad) 
+	{
 		this.totalLoad = totalLoad;
 	}
-	public String getTotalDistance() {
+	public String getTotalDistance() 
+	{
 		return totalDistance;
 	}
-	public void setTotalDistance(String totalDistance) {
+	public void setTotalDistance(String totalDistance) 
+	{
 		this.totalDistance = totalDistance;
 	}
-	public List<AssignedOrderResponse> getAssignedOrders() {
+	public List<AssignedOrderResponse> getAssignedOrders() 
+	{
 		return assignedOrders;
 	}
-	public void setAssignedOrders(List<AssignedOrderResponse> assignedOrders) {
+	public void setAssignedOrders(List<AssignedOrderResponse> assignedOrders) 
+	{
 		this.assignedOrders = assignedOrders;
 	}
 
